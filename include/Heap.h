@@ -9,6 +9,16 @@ struct PriorVal
 {
 	int prior;
 	ValType val;
+	PriorVal()
+	{
+		prior = INFINITY;
+	}
+	PriorVal(int inp_pr, ValType inp_val)
+	{
+		prior = inp_pr;
+		val = inp_val;
+	}
+	~PriorVal() {}
 	bool operator>(PriorVal &r)
 	{
 		return (prior > r.prior);
@@ -103,7 +113,7 @@ private:
 			return;
 		if (b_heap[i] > b_heap[min])
 		{
-			int obl = b_heap[i];
+			PriorVal<ValType> obl = b_heap[i];
 			b_heap[i] = b_heap[min];
 			b_heap[min] = obl;
 		}
@@ -115,19 +125,19 @@ public:
 	{
 		max_size = 10;
 		cur_size = 0;
-		PriorVal<ValType> *b_heap = new PriorVal<ValType>[max_size];
+		b_heap = new PriorVal<ValType>[max_size];
 	}
 	Binary_Heap(int inp_size)
 	{
 		max_size = inp_size;
 		cur_size = 0;
-		PriorVal<ValType> *b_heap = new PriorVal<ValType>[max_size];
+		b_heap = new PriorVal<ValType>[max_size];
 	}
 	Binary_Heap(const Binary_Heap<ValType> &cop)
 	{
 		max_size = cop.max_size;
 		cur_size = cop.cur_size;
-		PriorVal<ValType> *b_heap = new PriorVal<ValType>[max_size];
+		b_heap = new PriorVal<ValType>[max_size];
 		for (int i = 0; i < cur_size; i++)
 		{
 			b_heap[i] = cop.b_heap[i];
@@ -135,11 +145,9 @@ public:
 	}
 	~Binary_Heap()
 	{
-		if (b_heap != NULL)
-			delete[] b_heap;
-		b_heap = NULL;
+		delete[] b_heap;
 	}
-	void insert(PriorVal inp)
+	void insert(PriorVal<ValType> inp)
 	{
 		b_heap[cur_size] = inp;
 		emersion(cur_size);
@@ -149,7 +157,7 @@ public:
 	}
 	void decrease_weight(int ind, int weight)
 	{
-		b_heap[ind].prior = b_heap[inp].prior - weight;
+		b_heap[ind].prior = b_heap[ind].prior - weight;
 		emersion(ind);
 	}
 	void delete_min()
@@ -157,7 +165,7 @@ public:
 		cur_size--;
 		if (cur_size > 0)
 		{
-			int obl = b_heap[0];
+			PriorVal<ValType> obl = b_heap[0];
 			b_heap[0] = b_heap[cur_size];
 			b_heap[cur_size] = obl;
 			diving(0);
@@ -172,8 +180,7 @@ public:
 	}
 	void makeheap(PriorVal<ValType> *inp_mas, int inp_size)
 	{
-		if (b_heap != NULL)
-			delete[] b_heap;
+		delete[] b_heap;
 		max_size = inp_size + inp_size * 0.5;
 		b_heap = new PriorVal<ValType>[max_size];
 		cur_size = inp_size;
@@ -184,6 +191,19 @@ public:
 			emersion(i);
 		}
 	}
+	void get_head()
+	{
+		if (cur_size != 0)
+			return b_heap[0].val;
+		else
+			throw 1;
+	}
+	void print()
+	{
+		for (int i = 0; i < cur_size; i++)
+		{
+			std::cout << b_heap[i].val << ' ';
+		}
+	}
 };
-
 #endif
